@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin
 # KMS-on-pfSense Installer
 # by Meliton Hinojosa
 # Installer for KMS server on your pfSense appliance
@@ -60,20 +60,20 @@ copyKMS()
 echo " "
 echo "======= COPYING KMS binary"
 echo " COPYING KMS server to /bin directory"
-curl -o /bin/vlmcsd -sS https://raw.githubusercontent.com/meliton/KMS-on-pfSense/master/bin/vlmcsd
+curl -o /bin/vlmcsd -sS https://raw.githubusercontent.com/gauyeun/KMS-on-pfSense/master/bin/vlmcsd
 }
 
 createStartup()
 {
 echo " "
 echo "======= WRITING startup script"
-echo " WRITING startup script as /usr/local/etc/rc.d/kms_start.sh"
-echo "#!/bin/sh" > /usr/local/etc/rc.d/kms_start.sh
-echo "#" >> /usr/local/etc/rc.d/kms_start.sh
-echo "# startup script on bootup for KMS server" >> /usr/local/etc/rc.d/kms_start.sh
-echo "# 30 day renewal, 7 day failed retry interval" >> /usr/local/etc/rc.d/kms_start.sh
-echo "#" >> /usr/local/etc/rc.d/kms_start.sh
-echo "/bin/vlmcsd -R30d -A7d" >> /usr/local/etc/rc.d/kms_start.sh
+echo " WRITING startup script as /usr/local/etc/rc.syshook.d/start/20-kms_start.sh"
+echo "#!/bin/sh" > /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
+echo "#" >> /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
+echo "# startup script on bootup for KMS server" >> /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
+echo "# 30 day renewal, 7 day failed retry interval" >> /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
+echo "#" >> /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
+echo "/bin/vlmcsd -R30d -A7d" >> /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
 }
 
 makeExecute()
@@ -83,10 +83,10 @@ echo "======= SETTING executable flags on files"
 echo " SETTING KMS binary executable"
 chmod 755 /bin/vlmcsd
 echo " SETTING kms_start script executable"
-chmod 755 /usr/local/etc/rc.d/kms_start.sh
+chmod 755 /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
 echo " CHECKING KMS binary and kms_start script for execute permissions"
 ls -l /bin/vlmcsd | cut -d" " -f1,13
-ls -l /usr/local/etc/rc.d/kms_start.sh | cut -d" " -f1,13
+ls -l /usr/local/etc/rc.syshook.d/start/20-kms_start.sh | cut -d" " -f1,13
 }
 
 preCleanUp()
@@ -99,7 +99,7 @@ pkill vlmcsd
 echo " DELETING old KMS server..."
 rm -f /bin/vlmcsd
 echo " DELETING old kms_start script..."
-rm -f /usr/local/etc/rc.d/kms_start.sh
+rm -f /usr/local/etc/rc.syshook.d/start/20-kms_start.sh
 }
 
 runKMS()
